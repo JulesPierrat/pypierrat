@@ -3,7 +3,7 @@ sudo rm -rf dist
 source ./env/bin/activate
 
 pip freeze > requirements.txt
-build
+python3 -m build
 twine upload --repository pypi dist/*
 
 deactivate

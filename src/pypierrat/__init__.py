@@ -1,1 +1,1 @@
-from dfconverter import DfConverter
+from .dfconverter import DfConverter
