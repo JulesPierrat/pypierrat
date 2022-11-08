@@ -1,12 +1,9 @@
-sudo rm -rf build
 sudo rm -rf dist
-sudo rm -rf *.egg-info
-sudo rm -rf .coverage
-sudo rm -rf ./src/__pycache__
 
 source ./env/bin/activate
 
-python3 setup.py sdist bdist_wheel
-python -m twine upload dist/*
+pip freeze > requirements.txt
+build
+twine upload --repository pypi dist/*
 
 deactivate
