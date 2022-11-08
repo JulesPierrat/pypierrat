@@ -1,4 +1,4 @@
-# pypierrat
+# PyPierrat
 My Personal Python Librairie
 
 ## Use
