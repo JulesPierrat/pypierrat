@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="pypierrat",
-    version="0.0.2",
+    version="0.0.1",
     author="Jules Pierrat",
     author_email="jules.pierrat.98@gmail.com",
     description="My Personal Python Package",
