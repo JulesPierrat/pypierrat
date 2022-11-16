@@ -22,7 +22,7 @@ Create virtual environnement
 python3 -m venv env
 
 # Setup
-pip install -r requiirements.txt
+pip install -r requirements.txt
 ```
 
 Activate / deactivate virtual env

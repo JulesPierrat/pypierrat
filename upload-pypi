@@ -1,4 +1,5 @@
 sudo rm -rf dist
+sudo rm -rf *.egg-info
 
 source ./env/bin/activate
 
