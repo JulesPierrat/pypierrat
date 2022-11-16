@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import json
 
 class DfConverter:
     # Constructor
@@ -41,28 +42,19 @@ class DfConverter:
             dataframe = dataframe.copy()
             
         # PROCESS
-        # For each columns
         for c in columns:
-            # Extract data
+            # get data
             data = dataframe[c].to_list()
-            # Put in new dataframe
-            ndf = pd.DataFrame(data)
-            # for each new columns
-            for nc in ndf.columns.to_list():
-                if type(ndf[nc][0]) == dict:
-                    ndf = self.JsonRecordsToColumns(ndf, columns=nc, drop=True)
-            # Prefix to columns
-            ndf = ndf.add_prefix(c + '.')
-            # Concat dataframe
-            dataframe = pd.concat([dataframe, ndf], axis=1)
-            # Drop column
-            if drop:
-                dataframe.drop(c, axis=1, inplace=True)
+            dataframe = pd.concat([dataframe, pd.json_normalize(data).add_prefix(c + ".")], axis=1)
+
+        # DROP
+        if drop:
+            dataframe.drop(columns=columns, inplace=True)
         
         # RETURN DF
         return dataframe
     
-    def JsonListToColumns(self, dataframe, columns=[], inplace=False, drop=False):
+    def ListToColumns(self, dataframe, columns=[], inplace=False, drop=False):
         '''
         Converts a dataframe with list to a dataframe with columns.
         
@@ -102,7 +94,6 @@ class DfConverter:
         for c in columns:
             # For each rows
             for index in dataframe.index.to_list():
-                print()
                 # Create temp dataframe
                 dataset_temp = pd.concat([dataframe.iloc[[index]]]*len(dataframe[c].iloc[[index]].to_list()[0]), ignore_index=True)
                 # Create new columns
@@ -120,3 +111,48 @@ class DfConverter:
         # RETURN DF
         return dataframe
 
+    def JsonListToColumns(self, dataframe, columns=[], inplace=False, drop=False):
+        '''
+        Converts a dataframe with list of json to a dataframe with columns.
+        
+        Parameters: 
+            dataframe (pandas.DataFrame): Dataframe with json records
+            columns (str, list<str>): Columns of type dict
+            inplace (bool): If True, the dataframe is modified in place
+            drop (bool): If True, the json records are dropped
+        '''
+        
+        # CHECK 
+        if (not isinstance(dataframe, pd.DataFrame)):
+            raise TypeError
+        if not ((isinstance(columns, list)) or (isinstance(columns, str))):
+            raise TypeError
+        if (not isinstance(inplace, bool)):
+            raise TypeError
+        if (not isinstance(drop, bool)):
+            raise TypeError
+        
+        # INIT
+        # Set columns
+        if isinstance(columns, list):
+            if (len(columns) == 0):
+                columns = dataframe.columns.to_list()
+        else:
+            columns = [columns]
+        
+        # Init dataframe with inplace
+        if not inplace:
+            dataframe = dataframe.copy()
+            
+        # PROCESS
+        dataframe = self.ListToColumns(dataframe, columns=columns, inplace=False, drop=False)
+        c = []
+        for col in columns:
+            c += [col + "_value"]
+        dataframe = self.JsonRecordsToColumns(dataframe, columns=c, inplace=False, drop=False)
+
+        if drop:
+            dataframe.drop(columns=columns, inplace=True)
+
+        # RETURN
+        return dataframe
