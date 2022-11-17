@@ -72,6 +72,7 @@ class MapData:
                 ).add_to(self.map)
 
         # Center map on data
-        self.map.location = [dataframe[lat].mean(),dataframe[lon].mean()]
+        if center_map_on_data:
+            self.map.location = [dataframe[lat].mean(),dataframe[lon].mean()]
 
         return self
