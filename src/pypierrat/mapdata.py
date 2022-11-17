@@ -42,7 +42,7 @@ class MapData:
 
         return self.figure
     
-    def addDataFromDf(self, dataframe, lat="lat", lon="lon", attributes="all", type="marker"):
+    def addDataFromDf(self, dataframe, lat="lat", lon="lon", attributes="all", type="marker", center_map_on_data=True):
         '''
         Add data from a dataframe to this map
 
@@ -51,6 +51,8 @@ class MapData:
             lat (str): Columns with latitude WGS84
             lon (str): Columns with longitude WGS84
             attributes (str, list): Array of columns name
+            type (str): Type of the data on the map [marker,]
+            center_map_on_data (bool): If true, center map on data
 
         Return
             MadData object
@@ -68,5 +70,8 @@ class MapData:
                     location = [row[lat], row[lon]],
                     popup = dataframe[attributes].iloc[[index]].transpose().to_html(header=False)
                 ).add_to(self.map)
+
+        # Center map on data
+        self.map.location = [dataframe[lat].mean(),dataframe[lon].mean()]
 
         return self
