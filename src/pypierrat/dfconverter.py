@@ -45,7 +45,8 @@ class DfConverter:
         for c in columns:
             # get data
             data = dataframe[c].to_list()
-            dataframe = pd.concat([dataframe, pd.json_normalize(data).add_prefix(c + ".")], axis=1)
+            data = pd.json_normalize(data).add_prefix(c + ".")
+            dataframe = pd.concat([dataframe, data], axis=1)
 
         # DROP
         if drop:
@@ -107,6 +108,9 @@ class DfConverter:
 
         # Update dataframe
         dataframe = new_dataset
+
+        # Reindex
+        dataframe = dataframe.reset_index(drop=True)
         
         # RETURN DF
         return dataframe
@@ -149,7 +153,8 @@ class DfConverter:
         c = []
         for col in columns:
             c += [col + "_value"]
-        dataframe = self.JsonRecordsToColumns(dataframe, columns=c, inplace=False, drop=False)
+
+        dataframe = self.JsonRecordsToColumns(dataframe, columns=c, inplace=False, drop=True)
 
         if drop:
             dataframe.drop(columns=columns, inplace=True)
